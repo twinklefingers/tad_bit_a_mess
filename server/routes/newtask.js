@@ -7,7 +7,9 @@ var connectionString = 'postgres://localhost:5432/omicron';
 //AJAX requests:
 router.delete('/:id', function(req, res) {
     console.log("reached delete request");
+
     var id = req.params.id;
+
     pg.connect(connectionString, function(err, client, done) {
         if (err) {
             res.sendStatus(500);
@@ -33,6 +35,7 @@ router.delete('/:id', function(req, res) {
 
 router.get('/', function(req, res) {
     console.log("reached get request");
+
     pg.connect(connectionString, function(err, client, done) {
         if (err) {
             res.sendStatus(500);
@@ -42,9 +45,9 @@ router.get('/', function(req, res) {
         //To manage strings and refrences cleaner
         var queryStringGET = 'SELECT * FROM todolist';
 
-        client.query(queryStringGET),
+        client.query('SELECT * FROM todolist',
             function(err, result) {
-                console.log(result);
+
                 done(); //closes connection, I only can have ten :(
                 if (err) {
                     res.sendStatus(500);
@@ -52,19 +55,21 @@ router.get('/', function(req, res) {
                     return;
                 }
                 res.send(result.rows);
-            }
+            });
     });
 });
 
 router.post('/', function(req, res) {
-    var item = req.body;
-    console.log('var item: ', item);
     console.log("reached post request");
+
+    var item = req.body;
+
     pg.connect(connectionString, function(err, client, done) {
         if (err) {
             res.sendStatus(500);
             console.log("\n \n \n \n!!!ERROR!!!\n error in POST, pg.connect ", err, "\n \n \n \n");
         }
+
         client.query('INSERT INTO todolist (newitem) ' + // case sensitive?
             'VALUES ($1)', [item.newitem],
             function(err, result) {
@@ -73,20 +78,21 @@ router.post('/', function(req, res) {
                 if (err) {
                     console.log("\n \n \n \n!!!ERROR!!!\n error in POST, client.query: ", err, "\n \n \n \n");
                     res.sendStatus(500);
-                } else {
-                    res.sendStatus(201);
-                    res.send(result.rows);
                 }
+                res.send(result.rows);
+                // res.sendStatus(201);
             });
-
     });
 });
 
 
 router.put('/:id', function(req, res) {
+    console.log('reached post request');
+
     var id = req.params.id;
     var rowValue = req.body;
-    console.log('reached post request');
+
+
 
     pg.connect(connectionString, function(err, client, done) {
         if (err) {
@@ -110,11 +116,10 @@ router.put('/:id', function(req, res) {
                     res.sendStatus(200);
                 }
             });
-
     });
 
 });
 
 
 
-module.exports = router;
+module.exports = router;;
