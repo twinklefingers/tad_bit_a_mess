@@ -102,7 +102,7 @@ function getData() {
                 var $el = $('<div id="' + rowData.id + '"></div>'); // append unique ids
 
                 // array to hold database column names
-                var dataTable = ['id', 'newItem', 'completedItem'];
+                var dataTable = ['id', 'newitem', 'completeditem']; // case sensitive?
                 //forEach within forEach
                 dataTable.forEach(function(property) {
 

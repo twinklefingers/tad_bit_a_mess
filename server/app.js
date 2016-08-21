@@ -8,9 +8,9 @@ app.use(bodyParser.urlencoded({
 }));
 
 //routes
-var testRoute = require("./routes/testRoute.js");
+var newtask = require("./routes/newtask.js");
 
-app.use('/testRoute', testRoute);
+app.use('/newtask', newtask);
 
 
 app.get('/*', function(req, res) {
