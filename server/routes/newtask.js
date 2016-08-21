@@ -6,7 +6,7 @@ var connectionString = 'postgres://localhost:5432/omicron';
 
 //AJAX requests:
 router.delete('/:id', function(req, res) {
-    console.log("reached delete request");
+    console.log("reached router.delete request");
 
     var id = req.params.id;
 
@@ -15,12 +15,10 @@ router.delete('/:id', function(req, res) {
             res.sendStatus(500);
             console.log("\n \n \n \n!!!ERROR!!!\n error in DELETE, pg.connect\n", err, "\n \n \n \n");
         }
+        console.log("Successfully reached router.delete, pg.connect ");
 
-        //To manage strings and refrences cleaner
-        var refrenceValues = [id];
-        var queryString = 'DELETE FROM todolist WHERE id = $1';
-
-        client.query(queryString, refrenceValues),
+        client.query('DELETE FROM todolist ' +
+            'WHERE id = $1', [id],
             function(err, result) {
                 done();
                 if (err) {
@@ -29,29 +27,26 @@ router.delete('/:id', function(req, res) {
                     return;
                 }
                 res.sendStatus(200);
-            }
+                console.log("Successfully reached router.delete, client.query ");
+            });
     });
 });
 
 router.get('/', function(req, res) {
-    console.log("reached get request");
+    console.log("reached router.get request");
 
     pg.connect(connectionString, function(err, client, done) {
         if (err) {
             res.sendStatus(500);
-            console.log("\n \n \n \n!!!ERROR!!!\n error in GET, pg.connect", err, "\n \n \n \n");
+            console.log("\n \n \n \n!!!ERROR!!!\n error in router.get, pg.connect", err, "\n \n \n \n");
         }
-
-        //To manage strings and refrences cleaner
-        var queryStringGET = 'SELECT * FROM todolist';
 
         client.query('SELECT * FROM todolist',
             function(err, result) {
-
                 done(); //closes connection, I only can have ten :(
                 if (err) {
                     res.sendStatus(500);
-                    console.log("\n \n \n \n!!!ERROR!!!\n error in GET, client.query: ", err, "\n \n \n \n");
+                    console.log("\n \n \n \n!!!ERROR!!!\n error in router.get, client.query: ", err, "\n \n \n \n");
                     return;
                 }
                 res.send(result.rows);
@@ -60,66 +55,90 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-    console.log("reached post request");
-
-    var item = req.body;
+    //updateTask (previously: item) is an object you received from the client
+    //Check what you're sending on the client
+    var updateTask = req.body;
+    console.log("reached router.post request. item: ", updateTask);
 
     pg.connect(connectionString, function(err, client, done) {
         if (err) {
             res.sendStatus(500);
-            console.log("\n \n \n \n!!!ERROR!!!\n error in POST, pg.connect ", err, "\n \n \n \n");
+            console.log("\n \n \n \n!!!ERROR!!!\n error in router.post, pg.connect ", err, "\n \n \n \n");
         }
 
-        client.query('INSERT INTO todolist (newitem) ' + // case sensitive?
-            'VALUES ($1)', [item.newitem],
+        client.query('INSERT INTO todolist (newitem, completeditem) ' + // case sensitive?
+            'VALUES ($1, $2)', [updateTask.newitem, updateTask.completeditem], //case sensitive
             function(err, result) {
                 done();
 
                 if (err) {
-                    console.log("\n \n \n \n!!!ERROR!!!\n error in POST, client.query: ", err, "\n \n \n \n");
+                    console.log("\n \n \n \n!!!ERROR!!!\n error in router.post, client.query: ", err, "\n \n \n \n");
                     res.sendStatus(500);
                 }
-                res.send(result.rows);
-                // res.sendStatus(201);
+                // res.send(result.rows);
+                res.sendStatus(201);
             });
     });
 });
 
 
-router.put('/:id', function(req, res) {
-    console.log('reached post request');
+// router.put('/:id', function(req, res) {
+//     console.log('reached router.put request');
+//
+//     var id = req.params.id;
+//     var rowValue = req.body;
+//
+//     pg.connect(connectionString, function(err, client, done) {
+//         if (err) {
+//             console.log("\n \n \n \n!!!ERROR!!!\n error in router.put, pg.connect", err, "\n \n \n \n");
+//             res.sendStatus(500);
+//         }
+//         console.log('successfully reached router.put pg.connect request');
+//
+//         client.query('UPDATE todolist ' +
+//             'SET newitem = $1, ' +
+//             'completeditem = $2 ', + //case sensitive
+//             ' WHERE id = $3', [rowValue.newitem, rowValue.completeditem, id], //case sensitive
+//             function(err, result) {
+//                 done();
+//                 if (err) {
+//                     res.sendStatus(500);
+//                     console.log("\n \n \n \n!!!ERROR!!!\n error in router.put, client.query: ", err, "\n \n \n \n");
+//                 } else {
+//                     res.sendStatus(200);
+//                     console.log('successfully completed router.put client.query request');
+//                 }
+//             });
+//     });
+//
+// });
 
+router.put('/:id', function(req, res) {
     var id = req.params.id;
     var rowValue = req.body;
 
-
-
     pg.connect(connectionString, function(err, client, done) {
         if (err) {
-            console.log("\n \n \n \n!!!ERROR!!!\n error in PUT, pg.connect", err, "\n \n \n \n");
             res.sendStatus(500);
         }
 
-        //To manage strings and refrences cleaner
-        var queryString = 'UPDATE todolist SET newItem = $1, completedItem = $2 WHERE id = $3';
-        var refrenceValues = [rowValue.newitem, rowValue.completeditem, id];
-
-        client.query(queryString, refrenceValues,
-
+        client.query('UPDATE todolist ' +
+            'SET newitem = $1, ' +
+            'completeditem = $2 ' +
+            'WHERE id = $3', [rowValue.newitem, rowValue.completeditem, id],
             function(err, result) {
                 done();
+
                 if (err) {
+                    console.log('err', err);
                     res.sendStatus(500);
-                    console.log("\n \n \n \n!!!ERROR!!!\n error in PUT, client.query: ", err, "\n \n \n \n");
-                    return;
                 } else {
                     res.sendStatus(200);
                 }
             });
     });
-
 });
 
 
 
-module.exports = router;;
+module.exports = router;

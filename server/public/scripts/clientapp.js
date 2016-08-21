@@ -1,9 +1,12 @@
 $(document).ready(function() {
 
+    getData();
+
     //event listeners
+
     $('#submitTask').on("click", postData);
-    $('#TasksTable').on("click", ".delete", deleteData);
-    $('#TasksTable').on("click", ".update", updateData);
+    $('#tasksTable').on("click", ".delete", deleteData);
+    $('#tasksTable').on("click", ".update", updateData);
 
 }); //end doc ready
 
@@ -35,7 +38,7 @@ function deleteData() {
 // AJAX PUT request, .serializeArray(), $.each
 function updateData() {
     var updateTask = {}; //initialize catch all object
-    var inputs = $(this).parent().childern().serializeArray(); // ?? more reseach needed
+    var inputs = $(this).parent().children().serializeArray(); //goes into data table to grab all data within. // ?? more reseach needed
 
     $.each(inputs, function(i, field) { // and what is this?
         updateTask[field.name] = field.value;
@@ -57,7 +60,7 @@ function updateData() {
             getData();
         },
         error: function() {
-            console.log('AJAX Error using updateData function in clientapp!');
+            console.log('AJAX Error using updateData function in clientapp! ', updatedData);
         }
     });
 }
@@ -66,20 +69,20 @@ function updateData() {
 function postData() {
     event.preventDefault();
 
-    var postNewData = {};
+    var updateTask = {};
     // var taskID = $('#').val();
     // todolist.id = taskID;
 
     $.each($('#dataForm').serializeArray(), function(i, field) {
-        postNewData[field.name] = field.value;
+        updateTask[field.name] = field.value;
     });
 
     $.ajax({
         type: 'POST',
         url: '/newtask',
-        data: postNewData,
+        data: updateTask,
         success: function() {
-            console.log('Success /POST! Posted: ', postNewData);
+            console.log('Success /POST! Posted: ', updateTask);
             $('#tasksTable').empty();
             getData();
         },
@@ -99,10 +102,11 @@ function getData() {
 
             // data.forEach
             data.forEach(function(rowData, i) {
-                var $el = $('<div id="' + rowData.id + '"></div>'); // append unique ids
 
+                var $el = $('<div id="' + rowData.id + '"></div>'); // append unique ids
                 // array to hold database column names
-                var dataTable = ['id', 'newitem', 'completeditem']; // case sensitive?
+                var dataTable = ['id', 'newItem', 'completeditem']; // case sensitive?
+
                 //forEach within forEach
                 dataTable.forEach(function(property) {
 
@@ -110,6 +114,8 @@ function getData() {
                     $input.val(rowData[property]);
                     $el.append($input);
                 });
+
+                $el.data('updatedData', rowData.id);
 
                 //append the buttons to the DOM
                 $el.append('<button id=' + rowData.id + ' class="update">Update</button>');

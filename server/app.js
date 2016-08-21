@@ -8,7 +8,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 //routes
-var newtask = require("./routes/newtask.js");
+var newtask = require('./routes/newtask');
 
 app.use('/newtask', newtask);
 
@@ -17,6 +17,7 @@ app.get('/*', function(req, res) {
     var file = req.params[0] || '/views/index.html';
     res.sendFile(path.join(__dirname, './public', file));
 });
+
 
 app.set('port', process.env.PORT || 3000);
 
