@@ -105,7 +105,7 @@ function getData() {
 
                 var $el = $('<div id="' + rowData.id + '"></div>'); // append unique ids
                 // array to hold database column names
-                var dataTable = ['id', 'newItem', 'completeditem']; // case sensitive?
+                var dataTable = ['newItem']; // case sensitive
 
                 //forEach within forEach
                 dataTable.forEach(function(property) {
@@ -115,10 +115,10 @@ function getData() {
                     $el.append($input);
                 });
 
-                $el.data('updatedData', rowData.id);
+                $el.data('updatedData', rowData.id); //what is this doing?
 
                 //append the buttons to the DOM
-                $el.append('<button id=' + rowData.id + ' class="update">Update</button>');
+                $el.append('<button id=' + rowData.id + ' class="update">Change (Complete)</button>');
                 $el.append('<button id=' + rowData.id + ' class="delete">Delete</button>');
 
                 $('#tasksTable').append($el); // table on html to append to

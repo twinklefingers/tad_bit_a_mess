@@ -66,8 +66,8 @@ router.post('/', function(req, res) {
             console.log("\n \n \n \n!!!ERROR!!!\n error in router.post, pg.connect ", err, "\n \n \n \n");
         }
 
-        client.query('INSERT INTO todolist (newitem, completeditem) ' + // case sensitive?
-            'VALUES ($1, $2)', [updateTask.newitem, updateTask.completeditem], //case sensitive
+        client.query('INSERT INTO todolist (newItem) ' + // case sensitive
+            'VALUES ($1)', [updateTask.newItem], //case sensitive
             function(err, result) {
                 done();
 
@@ -81,7 +81,7 @@ router.post('/', function(req, res) {
     });
 });
 
-
+// WHY THE HELL DIDN'T THIS CODE WORK?? #hourswasted
 // router.put('/:id', function(req, res) {
 //     console.log('reached router.put request');
 //
@@ -96,9 +96,9 @@ router.post('/', function(req, res) {
 //         console.log('successfully reached router.put pg.connect request');
 //
 //         client.query('UPDATE todolist ' +
-//             'SET newitem = $1, ' +
-//             'completeditem = $2 ', + //case sensitive
-//             ' WHERE id = $3', [rowValue.newitem, rowValue.completeditem, id], //case sensitive
+//             'SET newItem = $1, ' +
+//             'completedItem = $2 ', + //case sensitive
+//             ' WHERE id = $3', [rowValue.newItem, rowValue.completedItem, id], //case sensitive
 //             function(err, result) {
 //                 done();
 //                 if (err) {
@@ -123,9 +123,9 @@ router.put('/:id', function(req, res) {
         }
 
         client.query('UPDATE todolist ' +
-            'SET newitem = $1, ' +
-            'completeditem = $2 ' +
-            'WHERE id = $3', [rowValue.newitem, rowValue.completeditem, id],
+            'SET newItem = $1 ' +
+            // 'completedItem = $2 ' +
+            'WHERE id = $2', [rowValue.newItem, id],
             function(err, result) {
                 done();
 
