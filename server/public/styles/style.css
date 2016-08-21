@@ -1,0 +1,8 @@
+#dataForm {
+    width: 50%;
+    padding-bottom: 30px;
+}
+#tasksTable {
+    font-style: italic;
+    font-weight: bold;
+}

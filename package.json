@@ -1,0 +1,17 @@
+{
+  "name": "to_do_list_v1",
+  "version": "1.0.0",
+  "description": "to do app",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "pg": "^6.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node server/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "twinklefingers",
+  "license": "ISC"
+}
